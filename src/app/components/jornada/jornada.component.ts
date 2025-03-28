@@ -1,19 +1,28 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+// import { RouterOutlet } from '@angular/router';
 import { TimeService } from '../../services/time.service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-jornada',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule],
   templateUrl: './jornada.component.html',
   styleUrls: ['./jornada.component.css']
 })
 
 export class JornadaComponent {
   private timeService = new TimeService(); 
+
+  // Motivos de pausa
+  private pauseReasons = [
+    'Desayuno',
+    'Comida',
+    'Médico',
+    'Personal',
+    'Otro'
+  ];
 
   // Método para comenzar la jornada
   async startJornada() {
@@ -47,6 +56,7 @@ export class JornadaComponent {
     }
   }
 
+  // Método para pausar la jornada
   async pauseJornada() {
     try {
       // Mostrar cuadro de entrada con SweetAlert2
@@ -65,10 +75,33 @@ export class JornadaComponent {
         }
       });
 
-      // Si el usuario ingresó un código, llamamos a la API
+      // Si el usuario ingresó un código, le pedimos el motivo de la pausa
       if (code) {
-        const response = await this.timeService.pauseJornada(code);
-        Swal.fire('Éxito', 'Jornada pausada correctamente', 'success');
+        // Mostrar cuadro con un selector desplegable de motivos de la pausa
+        const { value: pause_reason } = await Swal.fire({
+          title: 'Selecciona el motivo de la pausa',
+          input: 'select',
+          inputOptions: this.pauseReasons.reduce((acc: Record<string, string>, reason) => {
+            acc[reason] = reason;
+            return acc;
+          }, {} as Record<string, string>),
+          inputPlaceholder: 'Seleccione un motivo',
+          showCancelButton: true,
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar',
+          inputValidator: (value) => {
+            if (!value) {
+              return '¡Debes seleccionar un motivo!';
+            }
+            return null;
+          }
+        });
+
+        // Si el usuario seleccionó un motivo, llamamos a la API
+        if (pause_reason) {
+          const response = await this.timeService.pauseJornada(code, pause_reason);
+          Swal.fire('Éxito', 'Jornada pausada correctamente', 'success');
+        };
       }
 
     } catch (error) {
