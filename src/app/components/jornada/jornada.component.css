@@ -66,3 +66,23 @@ h1 {
 .button-container button:nth-child(3):hover {
     background-color: #ff5722;
 }
+
+/* El cuarto botón de informes es celeste*/
+.button-container button:nth-child(4) {
+    background-color: #42A5F5;
+    color: white;
+}
+
+.button-container button:nth-child(4):hover {
+    background-color: #2196F3;
+}
+
+/* El quinto botón de informes es azul marino*/
+.button-container button:nth-child(5) {
+    background-color: #0D47A1;
+    color: white;
+}
+
+.button-container button:nth-child(5):hover {
+    background-color: #1565C0;
+}

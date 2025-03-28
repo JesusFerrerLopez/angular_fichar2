@@ -17,7 +17,6 @@ export class TimeService {
   }
 
   // Método para pausar la jornada
-  // HACE FALTA IMPLEMENTAR MOTIVO DE LA PAUSA
   async pauseJornada(code: string, pause_reason: string): Promise<any> {
     try {
       const response = await axios.post(`${this.apiUrl}pause`, { code, pause_reason });
@@ -38,14 +37,4 @@ export class TimeService {
       throw error;
     }
   }
-
-  // async getTimes(): Promise<any> {
-  //   try {
-  //     const response = await axios.get(this.apiUrl);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error al obtener los tiempos:', error);
-  //     throw error;
-  //   }
-  // }
 }

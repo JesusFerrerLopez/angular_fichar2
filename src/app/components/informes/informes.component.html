@@ -1,0 +1,22 @@
+<div>
+    <a href="javascript:history.back()">Volver</a>
+</div>
+<div>
+    <form (ngSubmit)="onSubmit()">
+        <h2>Informes</h2>
+        <div class="form-group">
+          <label for="startDate">Fecha de inicio:</label>
+          <input type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required>
+        </div>
+      
+        <div class="form-group">
+          <label for="endDate">Fecha de finalización:</label>
+          <input type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required>
+        </div>
+
+        <!-- Campo oculto que adquiere el valor del código del empleado -->
+        <input type="hidden" id="employeeCode" [(ngModel)]="employeeCode" name="employeeCode" value="{{employeeCode}}">
+      
+        <button type="submit">Resumen</button>
+    </form>
+</div>

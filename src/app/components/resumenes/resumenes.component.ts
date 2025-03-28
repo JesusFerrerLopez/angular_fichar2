@@ -1,0 +1,127 @@
+import { Component } from '@angular/core';
+import { UserService } from '../../services/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-resumenes',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './resumenes.component.html',
+  styleUrl: './resumenes.component.css'
+})
+export class ResumenesComponent {
+  private userService;
+
+  // Variables para la vista
+  nombreEmpleado: string;
+  code: string;
+  data: { [key: string]: any }[];
+  jornadas: { Fecha: string; Entrada: string; Salida: string; Jornada: string; Fichaje: string }[];
+
+  // Variables para el formulario
+  startDate: string;
+  endDate: string;
+
+  constructor() {
+    // Si la sesión no tiene código de empleado, redirigir a la página de inicio
+    this.code = sessionStorage.getItem('code') || '';
+    if (!this.code) {
+      window.location.href = '/';
+    }
+
+    // Recuperamos la información de la sesión
+    this.nombreEmpleado = sessionStorage.getItem('name') || '';
+
+    // Incializamos el servicio
+    this.userService = new UserService;
+
+    // Recuperamos los datos enviados de la vista anterior o de haber vuelto a cargar la vista
+    this.data = history.state.data;
+
+    // Inicializamos las fechas del formuarlio usando el primer y último día de los datos
+    this.startDate = this.data[0]['date'];
+    this.endDate = this.data[this.data.length - 1]['date'];
+
+    // Llamamos al método para procesar los datos
+    this.jornadas = this.processData(this.data);
+  }
+
+  // Método para procesar los datos
+  processData(data: any) {
+    let datos = data;
+
+    // Ordenamos los datos por fecha empezando por el más antiguo
+    datos = datos.sort((a: any, b: any) => {
+      return a.datetime > b.datetime ? 1 : -1;
+    });
+
+    // Vamos a recorrer las jornadas y agrupar por filas
+    const jornadas: { Fecha: string; Entrada: string; Salida: string; Jornada: string; Fichaje: string }[] = [];
+    let newJornada = {
+      'Fecha': '',
+      'Entrada': '',
+      'Salida': '',
+      'Jornada': '',
+      'Fichaje': '' 
+    };
+
+    // newJornadaDay almacena el día de la jornada actual
+    // Su valor por defecto es el día del primer objeto de datos
+    let newJornadaDay = datos[0].date;
+    let lastType = datos[0].type;
+
+    data.forEach((jornada: any) => {
+      // Si la jornada es de un día diferente a la jornada actual, guardamos la jornada actual y creamos una nueva
+      if (jornada.date !== newJornadaDay) {
+        newJornadaDay = jornada.date;
+      }
+
+      // Si el tipo de la jornada es play y en la nueva jornada no hay entrada, guardamos la entrada
+      if (jornada.type === 'play' && !newJornada.Entrada) {
+        newJornada.Fecha = jornada.date;
+        newJornada.Entrada = jornada.time;
+      }
+
+      // Si el tipo de jornada es stop añadimos la nueva jornada y reiniciamos la jornada actual
+      if (jornada.type === 'stop') {
+        newJornada.Salida = jornada.time;
+
+        // Calculamos el fichaje en función de la entrada y la salida
+        const entrada = new Date(`2021-01-01T${newJornada.Entrada}`);
+        const salida = new Date(`2021-01-01T${newJornada.Salida}`);
+        const diff = (salida.getTime() - entrada.getTime()) / 1000;
+        const horas = Math.floor(diff / 3600);
+        const minutos = Math.floor((diff % 3600) / 60);
+        const segundos = Math.floor(diff % 60);
+        newJornada.Fichaje = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+
+        jornadas.push(newJornada);
+        newJornada = {
+          'Fecha': '',
+          'Entrada': '',
+          'Salida': '',
+          'Jornada': '',
+          'Fichaje': ''
+        };
+      }
+    });
+
+    console.log(jornadas);
+
+    return jornadas;
+
+  }
+
+  // Método que modifica la fecha de inicio y fin de las jornadas
+  async onSubmit() {
+    // Obtenemos los datos del formulario
+    this.startDate = this.startDate || this.data[0]['date'];
+    this.endDate = this.endDate || this.data[this.data.length - 1]['date'];
+
+    // Llamamos al método para obtener las jornadas
+    const response = await this.userService.getJornadas(this.code, this.startDate, this.endDate);
+
+    this.data = response.times;
+    this.jornadas = this.processData(this.data);
+  }
+}

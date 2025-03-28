@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 // import { RouterOutlet } from '@angular/router';
 import { TimeService } from '../../services/time.service';
+import { UserService } from '../../services/user.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,7 +15,8 @@ import Swal from 'sweetalert2';
 })
 
 export class JornadaComponent {
-  private timeService = new TimeService(); 
+  private timeService;
+  private userService;
 
   // Motivos de pausa
   private pauseReasons = [
@@ -24,24 +27,21 @@ export class JornadaComponent {
     'Otro'
   ];
 
+  constructor(private router: Router) {
+    // Inicializar los servicios
+    this.timeService = new TimeService;
+    this.userService = new UserService;
+
+    // Borramos la información de la sesión
+    sessionStorage.removeItem('code');
+    sessionStorage.removeItem('name');
+  }
+
   // Método para comenzar la jornada
   async startJornada() {
     try {
-      // Mostrar cuadro de entrada con SweetAlert2
-      const { value: code } = await Swal.fire({
-        title: 'Introduce tu código de empleado',
-        input: 'text',
-        inputPlaceholder: 'Código de empleado...',
-        showCancelButton: true,
-        confirmButtonText: 'Enviar',
-        cancelButtonText: 'Cancelar',
-        inputValidator: (value) => {
-          if (!value) {
-            return '¡Debes ingresar un código!';
-          }
-          return null;
-        }
-      });
+      // Método que solicita el código al usuario
+      const code = await this.getCode();
 
       // Si el usuario ingresó un código, llamamos a la API
       if (code) {
@@ -59,21 +59,8 @@ export class JornadaComponent {
   // Método para pausar la jornada
   async pauseJornada() {
     try {
-      // Mostrar cuadro de entrada con SweetAlert2
-      const { value: code } = await Swal.fire({
-        title: 'Introduce tu código de empleado',
-        input: 'text',
-        inputPlaceholder: 'Código de empleado...',
-        showCancelButton: true,
-        confirmButtonText: 'Enviar',
-        cancelButtonText: 'Cancelar',
-        inputValidator: (value) => {
-          if (!value) {
-            return '¡Debes ingresar un código!';
-          }
-          return null;
-        }
-      });
+      // Método que solicita el código al usuario
+      const code = await this.getCode();
 
       // Si el usuario ingresó un código, le pedimos el motivo de la pausa
       if (code) {
@@ -114,21 +101,8 @@ export class JornadaComponent {
   // Método para finalizar la jornada
   async endJornada() {
     try {
-      // Mostrar cuadro de entrada con SweetAlert2
-      const { value: code } = await Swal.fire({
-        title: 'Introduce tu código de empleado',
-        input: 'text',
-        inputPlaceholder: 'Código de empleado...',
-        showCancelButton: true,
-        confirmButtonText: 'Enviar',
-        cancelButtonText: 'Cancelar',
-        inputValidator: (value) => {
-          if (!value) {
-            return '¡Debes ingresar un código!';
-          }
-          return null;
-        }
-      });
+      // Método que solicita el código al usuario
+      const code = await this.getCode();
 
       // Si el usuario ingresó un código, llamamos a la API
       if (code) {
@@ -142,4 +116,55 @@ export class JornadaComponent {
       Swal.fire('Error', errorMessage, 'error');
     }
   }
+
+  // Método de informes que solicita el código al usuario y nos lleva a la vista de informes
+  async informes() {
+    try {
+      // Método que solicita el código al usuario
+      const code = await this.getCode();
+
+      // Si el usuario ingresó un código, nos lleva a la vista de informes
+      if (code) {
+        // Comprobamos si el código es correcto usando el userService
+        const user = await this.userService.getUser(code);
+
+        // Si el usuario existe, asignamos el código y el nombre a la sesión
+        if (user) {
+          sessionStorage.setItem('code', code);
+          sessionStorage.setItem('name', user.name);
+          this.router.navigate(['/informes']);
+        } else {
+          Swal.fire('Error', 'Código de empleado incorrecto', 'error');
+        }
+      }
+
+    } catch (error) {
+      // Verificar si el error tiene respuesta del servidor
+      const errorMessage = (error as any)?.response?.data?.message || 'No se pudo acceder a los informes';
+      Swal.fire('Error', errorMessage, 'error');
+    }
+  }
+
+  // Método que pide el código al usuario. Es una función local y no se usa en la API
+  async getCode() {
+    const { value: code } = await Swal.fire({
+      title: 'Introduce tu código de empleado',
+      input: 'text',
+      inputPlaceholder: 'Código de empleado...',
+      showCancelButton: true,
+      confirmButtonText: 'Enviar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Debes ingresar un código!';
+        }
+        return null;
+      }
+    });
+
+    if (code) {
+      return code;
+    }
+  }
+  
 }
