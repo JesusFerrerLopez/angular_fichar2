@@ -102,6 +102,7 @@ export class ResumenesComponent {
     // newJornadaDay almacena el día de la jornada actual
     // Su valor por defecto es el día del primer objeto de datos
     let newJornadaDay = datos[0].date;
+    let lastType = '';
 
     data.forEach((jornada: any) => {
       // Obtenemos la fecha y la hora usando el datetime de la jornada
@@ -115,8 +116,28 @@ export class ResumenesComponent {
 
       // Si el tipo de la jornada es play y en la nueva jornada no hay entrada, guardamos la entrada
       if (jornada.type === 'play' && !newJornada.Entrada) {
-        newJornada.Fecha = date;
-        newJornada.Entrada = time;
+        // Si la jornada anterior no se finalizó correctamente, terminamos la jornada anterior
+        if (lastType === 'play') {
+          newJornada.Salida = 'Sin salida';
+
+          // La jornada por defecto es de 8 horas
+          newJornada.Jornada = '08:00:00';
+
+          newJornada.Fichaje = '<i class="fa-solid fa-triangle-exclamation"></i> Jornada sin finalizar';
+
+          jornadas.push(newJornada);
+          newJornada = {
+            'Fecha': '',
+            'Entrada': '',
+            'Salida': '',
+            'Jornada': '',
+            'Fichaje': ''
+          };
+        } else {
+          newJornada.Fecha = date;
+          newJornada.Entrada = time;
+          lastType = jornada.type;
+        }
       }
 
       // Si el tipo de jornada es stop añadimos la nueva jornada y reiniciamos la jornada actual
@@ -145,11 +166,11 @@ export class ResumenesComponent {
           'Fichaje': ''
         };
 
-        // Asignamos el last type
-        // lastType = jornada.type;
+        lastType = jornada.type;
       }
     });
 
+    // Comprobamos si la última jornada se ha cerrado correctamente y sí estamos en el mismo día de hoy.
     return jornadas;
 
   }

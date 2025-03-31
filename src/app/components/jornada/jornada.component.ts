@@ -1,9 +1,11 @@
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 // import { RouterOutlet } from '@angular/router';
 import { TimeService } from '../../services/time.service';
 import { UserService } from '../../services/user.service';
+import { AuthInterceptor } from '../../services/auth.interceptor';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -11,7 +13,10 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './jornada.component.html',
-  styleUrls: ['./jornada.component.css']
+  styleUrls: ['./jornada.component.css'],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ]
 })
 
 export class JornadaComponent {
