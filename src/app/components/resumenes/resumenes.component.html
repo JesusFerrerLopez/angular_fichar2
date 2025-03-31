@@ -1,47 +1,33 @@
 <div>
-    <a href="javascript:history.back()">Volver</a>
-</div>
-<form (ngSubmit)="onSubmit()">
-    <h2>Informes</h2>
-    <div class="form-group">
-      <label for="startDate">Fecha de inicio:</label>
-      <input type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required>
-    </div>
+  <a href="javascript:history.back()"><i class="fa fa-arrow-left"></i>Volver</a>
+  <h2> Resumen de jornadas </h2>
+  <p>Empleado: {{ nombreEmpleado }}</p>
   
-    <div class="form-group">
-      <label for="endDate">Fecha de finalización:</label>
-      <input type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required>
-    </div>
-
-    <!-- Campo oculto que adquiere el valor del código del empleado -->
-    <input type="hidden" id="employeeCode" [(ngModel)]="code" name="employeeCode" value="{{code}}">
-  
-    <button type="submit">Resumen</button>
-</form>
-
-<div>
-    <h2> Resumen de jornadas </h2>
-    <p>Empleado: {{ nombreEmpleado }}</p>
-    <div *ngIf="jornadas && jornadas.length > 0">
-        <table border="1" style="width: 100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Jornada</th>
-              <th>Entrada</th>
-              <th>Salida</th>
-              <th>Fichaje</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let jornada of jornadas">
-              <td>{{ jornada.Fecha }}</td>
-              <td>{{ jornada.Jornada }}</td>
-              <td>{{ jornada.Entrada }}</td>
-              <td>{{ jornada.Salida }}</td>
-              <td>{{ jornada.Fichaje }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <form>
+      <label for="startDate">Desde: <input id="startDate" type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required></label>
+      <label for="endDate">Hasta: <input id="endDate" type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required></label>
+      <p id="error"></p>
+  </form>
+  <div *ngIf="jornadas && jornadas.length > 0">
+    <table id="table" border="1" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Jornada</th>
+          <th>Entrada</th>
+          <th>Salida</th>
+          <th>Fichaje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let jornada of jornadas">
+          <td>{{ jornada.Fecha }}</td>
+          <td>{{ jornada.Jornada }}</td>
+          <td>{{ jornada.Entrada }}</td>
+          <td>{{ jornada.Salida }}</td>
+          <td>{{ jornada.Fichaje }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
