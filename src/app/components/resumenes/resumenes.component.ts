@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,8 +10,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './resumenes.component.css'
 })
 export class ResumenesComponent {
-  private userService;
-
   // Variables para la vista
   nombreEmpleado: string;
   code: string;
@@ -22,7 +20,7 @@ export class ResumenesComponent {
   startDate: string;
   endDate: string;
 
-  constructor() {
+  constructor(private userService: UserService) {
     // Si la sesión no tiene código de empleado, redirigir a la página de inicio
     this.code = sessionStorage.getItem('code') || '';
     if (!this.code) {
@@ -31,9 +29,6 @@ export class ResumenesComponent {
 
     // Recuperamos la información de la sesión
     this.nombreEmpleado = sessionStorage.getItem('name') || '';
-
-    // Incializamos el servicio
-    this.userService = new UserService;
 
     // Recuperamos los datos enviados de la vista anterior o de haber vuelto a cargar la vista
     this.data = history.state.data;

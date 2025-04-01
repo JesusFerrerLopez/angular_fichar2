@@ -11,13 +11,11 @@ import Swal from 'sweetalert2';
   styleUrl: './informes.component.css'
 })
 export class InformesComponent {
-  private userService;
-
   startDate: string;
   endDate: string;
   employeeCode: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private userService: UserService) {
     // Establecer el código de empleado desde la sesión
     this.employeeCode = sessionStorage.getItem('code') || '';
 
@@ -37,8 +35,6 @@ export class InformesComponent {
     // Establecer las fechas por defecto
     this.startDate = todayString;
     this.endDate = todayString;
-
-    this.userService = new UserService;
   }
 
   // Esto se ejecuta después de que la vista se haya inicializado

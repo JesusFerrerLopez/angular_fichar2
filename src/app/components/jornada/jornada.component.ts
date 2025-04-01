@@ -1,11 +1,8 @@
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-// import { RouterOutlet } from '@angular/router';
 import { TimeService } from '../../services/time.service';
 import { UserService } from '../../services/user.service';
-import { AuthInterceptor } from '../../services/auth.interceptor';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,14 +11,10 @@ import Swal from 'sweetalert2';
   imports: [CommonModule],
   templateUrl: './jornada.component.html',
   styleUrls: ['./jornada.component.css'],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-  ]
+  providers: [TimeService, UserService]
 })
 
 export class JornadaComponent {
-  private timeService;
-  private userService;
 
   // Motivos de pausa
   private pauseReasons = [
@@ -32,11 +25,11 @@ export class JornadaComponent {
     'Otro'
   ];
 
-  constructor(private router: Router) {
-    // Inicializar los servicios
-    this.timeService = new TimeService;
-    this.userService = new UserService;
-
+  constructor(
+    private router: Router,
+    private timeService: TimeService,
+    private userService: UserService
+  ) {
     // Borramos la información de la sesión
     sessionStorage.removeItem('code');
     sessionStorage.removeItem('name');

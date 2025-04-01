@@ -1,27 +1,28 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Obtener el token de sessionStorage
-    const token = sessionStorage.getItem('token');
-
-    // Si el token existe, agregarlo a los encabezados de la solicitud
-    if (token) {
-      const clonedRequest = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-
-      // Continuar con la solicitud clonada que tiene el token en los headers
-      return next.handle(clonedRequest);
+// INTERCEPTOR DE AUTENTICACIÓN
+/*
+  Este interceptor se encarga de agregar el token de autorización a cada solicitud HTTP
+  y manejar los errores relacionados con la autenticación.
+*/
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // Clonamos la solicitud para agregar el encabezado de autorización
+  const cloned = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${sessionStorage.getItem('token')}` || ''
     }
-
-    // Si no hay token, pasar la solicitud sin modificaciones
-    return next.handle(req);
-  }
-}
+  });
+  // Pasamos la solicitud clonada al siguiente manejador
+  return next(cloned).pipe(
+    // Manejo de errores
+    catchError((error) => {
+      if (error.status === 401) {
+        // Si la respuesta es 401, redirigimos al usuario a la página de inicio de sesión
+        window.location.href = '/login';
+      }
+      return throwError(error);
+    })
+  );
+};

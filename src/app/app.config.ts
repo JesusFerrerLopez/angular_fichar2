@@ -1,6 +1,5 @@
 // import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 // import { provideRouter } from '@angular/router';
-// import { AuthInterceptor } from './services/auth.interceptor';  // Ajusta la ruta según corresponda
 // import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // import { routes } from './app.routes';
@@ -11,18 +10,18 @@
 
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { AuthInterceptor } from './services/auth.interceptor'; 
-import { provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi } from '@angular/common/http';
 
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
+import { authInterceptor } from './services/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(withInterceptorsFromDi()),  
+    provideHttpClient(withInterceptors([authInterceptor])), // Usa el interceptor globalmente
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,  // Registrar el interceptor
-      multi: true  // Importante para que se agregue a la cadena de interceptores
+      useValue: authInterceptor,  // Aquí lo registramos
+      multi: true,                // Asegúrate de que pueda haber más de un interceptor
     },
     provideRouter(routes)
   ]
