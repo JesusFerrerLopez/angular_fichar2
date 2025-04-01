@@ -1,13 +1,25 @@
-<form>
-    <label>
-        Correo electrónico:
-        <input type="email" [(ngModel)]="email" name="email" required>
-    </label>
-
-    <label>
-        Contraseña:
-        <input type="password" [(ngModel)]="password" name="password" required>
-    </label>
-
-    <button type="submit" (click)="login()">Iniciar sesión</button>
-</form>
+<div class="login-container">
+    <div class="logo-container">
+        <img src="img/logo.png" alt="Logo" class="logo">
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2>Iniciar sesión</h2>
+        </div>
+        <div class="card-body">
+            <form>
+                <label>
+                    Correo electrónico:
+                    <input type="email" [(ngModel)]="email" name="email" placeholder="Correo..." required>
+                </label>
+            
+                <label>
+                    Contraseña:
+                    <input type="password" [(ngModel)]="password" name="password" placeholder="Contraseña..." required>
+                </label>
+            
+                <button type="submit" (click)="login()">Iniciar sesión</button>
+            </form>
+        </div>
+    </div>
+</div>

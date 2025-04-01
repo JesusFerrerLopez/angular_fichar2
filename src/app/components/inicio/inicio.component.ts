@@ -4,17 +4,18 @@ import { Router } from '@angular/router';
 import { TimeService } from '../../services/time.service';
 import { UserService } from '../../services/user.service';
 import Swal from 'sweetalert2';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-jornada',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './jornada.component.html',
-  styleUrls: ['./jornada.component.css'],
+  templateUrl: './inicio.component.html',
+  styleUrls: ['./inicio.component.css'],
   providers: [TimeService, UserService]
 })
 
-export class JornadaComponent {
+export class InicioComponent {
 
   // Motivos de pausa
   private pauseReasons = [
@@ -24,6 +25,8 @@ export class JornadaComponent {
     'Personal',
     'Otro'
   ];
+  isMenuVisible = false; 
+  menuPosition: { [key: string]: string } = {};
 
   constructor(
     private router: Router,
@@ -33,6 +36,7 @@ export class JornadaComponent {
     // Borramos la información de la sesión
     sessionStorage.removeItem('code');
     sessionStorage.removeItem('name');
+    sessionStorage.removeItem('rol');
   }
 
   // Método para comenzar la jornada
@@ -48,9 +52,7 @@ export class JornadaComponent {
       }
 
     } catch (error) {
-      // Verificar si el error tiene respuesta del servidor
-      const errorMessage = (error as any)?.response?.data?.message || 'No se pudo pausar la jornada';
-      Swal.fire('Error', errorMessage, 'error');
+      this.showError(error, 'No se pudo iniciar la jornada');
     }
   }
 
@@ -90,9 +92,7 @@ export class JornadaComponent {
       }
 
     } catch (error) {
-      // Verificar si el error tiene respuesta del servidor
-      const errorMessage = (error as any)?.response?.data?.message || 'No se pudo pausar la jornada';
-      Swal.fire('Error', errorMessage, 'error');
+      this.showError(error, 'No se pudo pausar la jornada');
     }
   }
 
@@ -109,9 +109,7 @@ export class JornadaComponent {
       }
 
     } catch (error) {
-      // Verificar si el error tiene respuesta del servidor
-      const errorMessage = (error as any)?.response?.data?.message || 'No se pudo finalizar la jornada';
-      Swal.fire('Error', errorMessage, 'error');
+      this.showError(error, 'No se pudo finalizar la jornada');
     }
   }
 
@@ -120,26 +118,24 @@ export class JornadaComponent {
     try {
       // Método que solicita el código al usuario
       const code = await this.getCode();
+      
+      // Si el usuario no ingresó un código, no hacemos nada
+      if (!code) { return; } 
 
-      // Si el usuario ingresó un código, nos lleva a la vista de informes
-      if (code) {
-        // Comprobamos si el código es correcto usando el userService
-        const user = await this.userService.getUser(code);
+      // Comprobamos si el código es correcto usando el userService
+      const user = await this.userService.getUser(code);
 
-        // Si el usuario existe, asignamos el código y el nombre a la sesión
-        if (user) {
-          sessionStorage.setItem('code', code);
-          sessionStorage.setItem('name', user.name);
-          this.router.navigate(['/informes']);
-        } else {
-          Swal.fire('Error', 'Código de empleado incorrecto', 'error');
-        }
-      }
+      // Si el usuario existe, asignamos el código y el nombre a la sesión
+      if (!user) { Swal.fire('Error', 'Código de empleado incorrecto', 'error'); return; }
+
+      sessionStorage.setItem('code', code);
+      sessionStorage.setItem('name', user.name);
+      sessionStorage.setItem('role', user.role);
+      this.router.navigate(['/informes']);
 
     } catch (error) {
-      // Verificar si el error tiene respuesta del servidor
-      const errorMessage = (error as any)?.response?.data?.message || 'No se pudo acceder a los informes';
-      Swal.fire('Error', errorMessage, 'error');
+      // Si el error es una instancia de HttpErrorResponse
+      this.showError(error, 'No se pudo obtener el usuario');
     }
   }
 
@@ -164,5 +160,69 @@ export class JornadaComponent {
       return code;
     }
   }
+
+  /**
+     * Mensaje de error que recibe el error y un mensaje alternativo.
+     * 
+     * @param error Error que se recibe de la API.
+     * @param errorAlternativeMessage Mensaje alternativo que se muestra si no se encuentra un usuario.
+     */
+  showError(error: any, errorAlternativeMessage: string) {
+    if (error instanceof HttpErrorResponse) {
+      const errorMessage = error.error?.message || errorAlternativeMessage;
+      Swal.fire('Error', errorMessage, 'error');
+    } else {
+      // Si no es un HttpErrorResponse, se maneja como un error general
+      Swal.fire('Error', 'Ocurrió un error desconocido', 'error');
+    }
+  }
+
+  // ************************ ESTO NO FUNCIONA ***********************
+  toggleMenu(event: MouseEvent) {
+    this.isMenuVisible = !this.isMenuVisible;
+
+    if (this.isMenuVisible) {
+      const button = event.target as HTMLElement;
+      const buttonRect = button.getBoundingClientRect();
+      this.menuPosition = {
+        top: `${buttonRect.top - 10}px`,  // Ajusta la posición como necesites
+        left: `${buttonRect.left}px`
+      };
+    }
+  }
   
+  // Método para cerrar sesión
+  logout() {
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
+
+  // Método para enviar a la vista de administración
+  async admin() {
+    try {
+      // Método que solicita el código al usuario
+      const code = await this.getCode();
+
+      // Si el usuario no ingresó un código, no hacemos nada
+      if (!code) { return; } 
+
+      // Comprobamos si el código es correcto usando el userService
+      const user = await this.userService.getUser(code);
+
+      // Si el usuario existe y es admin, asignamos el código y el nombre a la sesión
+      if (!user) { Swal.fire('Error', 'Código de empleado incorrecto', 'error'); return; }
+      if (user.rol !== 'admin') { Swal.fire('Error', 'No tienes permisos para acceder a esta sección', 'error'); return; }
+
+      sessionStorage.setItem('code', code);
+      sessionStorage.setItem('name', user.name);
+      sessionStorage.setItem('rol', user.rol);
+
+      this.router.navigate(['/admin']);
+
+    } catch (error) {
+      // Si el error es una instancia de HttpErrorResponse
+      this.showError(error, 'No se pudo obtener el usuario');
+    }
+  }
 }

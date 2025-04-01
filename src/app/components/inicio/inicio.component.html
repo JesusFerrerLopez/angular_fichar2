@@ -1,0 +1,27 @@
+<h1>Fichar2</h1>
+<div class="button-container">
+    <button (click)="startJornada()"><i class="fa fa-play"></i>Iniciar Jornada</button>
+    <button (click)="pauseJornada()"><i class="fas fa-pause"></i>Pausar Jornada</button>
+    <button (click)="endJornada()"><i class="fas fa-stop"></i>Acabar Jornada</button>
+    <button (click)="informes()"><i class="fas fa-info"></i>Informes</button>
+    <button ><i class="fas fa-envelope"></i>Incidencias (No funciona)</button>
+    <button (click)="toggleMenu($event)"><i class="fa-solid fa-gear"></i>Ajustes</button>
+    <!-- ESTO HAY QUE METERLO COMO MENÚ DESPLEGABLE EN AJUSTES-->
+    <div>
+        <ul>
+            <li><a href="#">Opción 1</a></li>
+            <li><button (click)="admin()">Admin</button></li>
+            <li><button (click)="logout()">Cerrar sesión</button></li>
+        </ul>
+    </div>
+</div>
+
+<!--
+<div *ngIf="isMenuVisible" class="dropdown-menu" [ngStyle]="menuPosition">
+    <ul>
+        <li><a href="#">Opción 1</a></li>
+        <li><a href="#">Opción 2</a></li>
+        <li><a href="#">Opción 3</a></li>
+    </ul>
+</div>
+-->

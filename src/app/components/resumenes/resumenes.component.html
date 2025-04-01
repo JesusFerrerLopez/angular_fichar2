@@ -7,6 +7,7 @@
       <label for="startDate">Desde: <input id="startDate" type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required></label>
       <label for="endDate">Hasta: <input id="endDate" type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required></label>
       <p id="error"></p>
+      <button type="button" (click)="getResumen()">Buscar</button>
   </form>
   <div *ngIf="jornadas && jornadas.length > 0">
     <table id="table" border="1" style="width: 100%; border-collapse: collapse;">
@@ -30,4 +31,5 @@
       </tbody>
     </table>
   </div>
+  <p *ngIf="!jornadas || jornadas.length === 0">No se han encontrado jornadas entre las fechas seleccionadas</p>
 </div>

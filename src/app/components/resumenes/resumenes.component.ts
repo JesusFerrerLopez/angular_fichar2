@@ -41,43 +41,36 @@ export class ResumenesComponent {
     this.jornadas = this.processData(this.data);
   }
 
-  // Esto se ejecuta después de que la vista se haya inicializado
-  ngAfterViewInit(): void {
-    // Evento que comprueba que la fecha de fin no sea menor que la fecha de inicio
-    const endDateInput = document.querySelector('#endDate') as HTMLInputElement;
+  getResumen() {
     const startDateInput = document.querySelector('#startDate') as HTMLInputElement;
+    const endDateInput = document.querySelector('#endDate') as HTMLInputElement;
 
-    const validateDates = async () => {
-      const startDate = new Date(startDateInput.value);
-      const endDate = new Date(endDateInput.value);
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
 
-      if (endDate < startDate) {
-        // Si la fecha de fin es menor que la fecha de inicio, mostrar un mensaje de error
-        document.querySelector('#error')!.innerHTML = 'La fecha de fin no puede ser menor que la fecha de inicio';
-        this.jornadas = this.processData(this.data);
-        return [];
-      } else {
-        // Si la fecha de fin es correcta, ocultar el mensaje de error
-        document.querySelector('#error')!.innerHTML = '';
+    if (endDate < startDate) {
+      // Si la fecha de fin es menor que la fecha de inicio, mostrar un mensaje de error
+      document.querySelector('#error')!.innerHTML = 'La fecha de fin no puede ser menor que la fecha de inicio';
+      return;
+    } else {
+      // Si la fecha de fin es correcta, ocultar el mensaje de error
+      document.querySelector('#error')!.innerHTML = '';
+    }
 
-        // Llamamos al método para obtener las jornadas
-        const response = await this.userService.getJornadas(this.code, this.startDate, this.endDate);
-
-        this.data = response.times;
-        this.jornadas = this.processData(this.data);
-        return this.jornadas;
-      }
-    };
-
-    validateDates.bind(this);
-
-    startDateInput.addEventListener('change', validateDates);
-    endDateInput.addEventListener('change', validateDates);
+    // Llamamos al método para obtener las jornadas
+    this.userService.getJornadas(this.code, this.startDate, this.endDate).then((response: any) => {
+      this.data = response.times;
+      this.jornadas = this.processData(this.data);
+    });
   }
 
   // Método para procesar los datos
   processData(data: any): { Fecha: string; Entrada: string; Salida: string; Jornada: string; Fichaje: string }[] {
     let datos = data;
+
+    if (!datos || datos.length === 0) {
+      return [];
+    }
 
     // Ordenamos los datos por fecha empezando por el más antiguo
     datos = datos.sort((a: any, b: any) => {

@@ -131,3 +131,7 @@ div *ngIf="jornadas && jornadas.length > 0" {
   padding-top: 20px;
 } */
 
+#errorTable {
+  display: none;
+}
+
