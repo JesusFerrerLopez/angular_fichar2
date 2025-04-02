@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -58,4 +58,45 @@ export class UserService {
       throw error;
     }
   }
+
+  // Método para eliminar trabajador
+  async deleteWorker(code: string): Promise<any> {
+    try {
+      const response = await this.http.delete(`${this.apiUrl}user`, { params: { code } }).toPromise();
+      return response;
+    } catch (error) {
+      console.error('Error al eliminar el empleado:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * * Método que devuelve los registros de varios empleados de times en un rango de fechas
+   * * * @param workers Array de ids de los empleados
+   * * * @param startDate Fecha de inicio del rango
+   * * * @param endDate Fecha de fin del rango
+   * * @returns Registros de los empleados
+   */
+  async getTimes(workers: number[], startDate: string, endDate: string): Promise<any> {
+    try {
+        let params = new HttpParams();
+        
+        // Agregar cada trabajador como un array en la URL
+        workers.forEach(worker => {
+            params = params.append('workers[]', worker.toString());
+        });
+
+        params = params.append('startDate', startDate);
+        params = params.append('endDate', endDate);
+
+        const response = await this.http
+            .get(`${this.apiUrl}users/times`, { params })
+            .toPromise();
+        
+        return response;
+    } catch (error) {
+        console.error('Error al obtener los tiempos:', error);
+        throw error;
+    }
+}
 }

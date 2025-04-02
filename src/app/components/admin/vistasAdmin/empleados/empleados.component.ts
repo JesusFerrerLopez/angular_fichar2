@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
   selector: 'app-empleados',
   imports: [ CommonModule, FormsModule],
   templateUrl: './empleados.component.html',
-  styleUrl: './empleados.component.css'
+  styleUrls: ['./empleados.component.css', '../estilos.css']
 })
 
 export class EmpleadosComponent {
@@ -84,8 +84,16 @@ export class EmpleadosComponent {
       if (!confirmation) {
       return;
       }
-      // Aquí puedes agregar la lógica para eliminar al empleado
-      console.log('Empleado eliminado:', worker);
+
+      this.userService.deleteWorker(worker.code).then((response) => {
+        if (response) {
+          // Elimina el trabajador de la lista
+          console.log('Eliminando trabajador:', worker.code);
+          this.workers = this.workers.filter(w => w.code !== worker.code);
+          this.filterWorkers(); // Filtra la lista de trabajadores después de la eliminación
+        }
+      });
+      // Salir del modo edición
     });
   }
 

@@ -1,0 +1,37 @@
+<div>
+    <a href="javascript:history.back()"><i class="fa fa-arrow-left"></i>Volver</a>
+    <h2> Resumen de jornadas </h2>
+    <form>
+        <label for="startDate">Desde: <input id="startDate" type="date" id="startDate" [(ngModel)]="startDate" name="startDate" required></label>
+        <label for="endDate">Hasta: <input id="endDate" type="date" id="endDate" [(ngModel)]="endDate" name="endDate" required></label>
+        <p id="error"></p>
+        <button type="button" (click)="getResumenes()">Buscar</button>
+    </form>
+    
+    <div *ngFor="let worker of workersWithJornadas" class="card">
+        <p>Empleado: {{ worker.name }}</p>
+        <div *ngIf="worker.jornadas && worker.jornadas.length > 0">
+        <table id="table" border="1" style="width: 100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th><i class="fa-solid fa-calendar-days"></i> Fecha</th>
+                <th>Jornada</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Fichaje</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let jornada of worker.jornadas">
+                <td>{{ jornada.Fecha }}</td>
+                <td>{{ jornada.Jornada }}</td>
+                <td>{{ jornada.Entrada }}</td>
+                <td>{{ jornada.Salida }}</td>
+                <td>{{ jornada.Fichaje }}</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+        <p *ngIf="!worker.jornadas || worker.jornadas.length === 0">No se han encontrado jornadas entre las fechas seleccionadas</p>
+    </div>
+  </div>
