@@ -46,4 +46,16 @@ export class UserService {
       throw error;
     }
   }
+
+  // Método para actualizar
+  async updateWorker(name: string, code: string, new_code: string): Promise<any> {
+    try {
+      console.log('Actualizando empleado:', { name, code, new_code });
+      const response = await this.http.patch(`${this.apiUrl}user`, { name, code, new_code }).toPromise();
+      return response;
+    } catch (error) {
+      console.error('Error al actualizar el empleado:', error);
+      throw error;
+    }
+  }
 }

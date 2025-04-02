@@ -6,14 +6,29 @@
 
         <table *ngIf="filteredWorkers && filteredWorkers.length > 0">
             <tr>
-            <th>Empleado</th>
-            <th>Código</th>
-            <th>#</th>
+                <th>Empleado</th>
+                <th>Código</th>
+                <th>#</th>
             </tr>
             <tr *ngFor="let worker of filteredWorkers">
-            <td>{{ worker.name }}</td>
-            <td>{{ worker.code }}</td>
-            <td>Acciones de edición y borrado</td>
+                <td>
+                    <!-- Si el trabajador está en modo edición, muestra input -->
+                    <input *ngIf="editingWorker && editingWorker.id === worker.id" [(ngModel)]="editingWorker.name" />
+                    <span *ngIf="!editingWorker || editingWorker.id !== worker.id">{{ worker.name }}</span>
+                </td>
+                <td>
+                    <input *ngIf="editingWorker && editingWorker.id === worker.id" [(ngModel)]="editingWorker.code" />
+                    <span *ngIf="!editingWorker || editingWorker.id !== worker.id">{{ worker.code }}</span>
+                </td>
+                <td>
+                    <!-- Mostrar botón de "Confirmar" solo si está en edición -->
+                    <button class="btn-confirmar" *ngIf="editingWorker && editingWorker.id === worker.id" (click)="confirmarEdicion(worker)">Confirmar</button>
+                    <button class="btn-borrar"*ngIf="editingWorker && editingWorker.id === worker.id" (click)="cancelarEdicion()">Cancelar</button>
+        
+                    <!-- Mostrar botones "Editar" y "Borrar" si NO está en edición -->
+                    <button class="btn-editar"*ngIf="!editingWorker || editingWorker.id !== worker.id" (click)="editar(worker)">Editar</button>
+                    <button class="btn-borrar"*ngIf="!editingWorker || editingWorker.id !== worker.id" (click)="eliminar(worker)">Borrar</button>
+                </td>
             </tr>
         </table>
         
@@ -26,9 +41,24 @@
                 <th>#</th>
             </tr>
             <tr *ngFor="let worker of notFilteredWorkers">
-                <td>{{ worker.name }}</td>
-                <td>{{ worker.code }}</td>
-                <td>Acciones de edición y borrado</td>
+                <td>
+                    <!-- Si el trabajador está en modo edición, muestra input -->
+                    <input *ngIf="editingWorker && editingWorker.id === worker.id" [(ngModel)]="editingWorker.name" />
+                    <span *ngIf="!editingWorker || editingWorker.id !== worker.id">{{ worker.name }}</span>
+                </td>
+                <td>
+                    <input *ngIf="editingWorker && editingWorker.id === worker.id" [(ngModel)]="editingWorker.code" />
+                    <span *ngIf="!editingWorker || editingWorker.id !== worker.id">{{ worker.code }}</span>
+                </td>
+                <td>
+                    <!-- Mostrar botón de "Confirmar" solo si está en edición -->
+                    <button *ngIf="editingWorker && editingWorker.id === worker.id" (click)="confirmarEdicion(worker)">Confirmar</button>
+                    <button *ngIf="editingWorker && editingWorker.id === worker.id" (click)="cancelarEdicion()">Cancelar</button>
+        
+                    <!-- Mostrar botones "Editar" y "Borrar" si NO está en edición -->
+                    <button *ngIf="!editingWorker || editingWorker.id !== worker.id" (click)="editar(worker)">Editar</button>
+                    <button *ngIf="!editingWorker || editingWorker.id !== worker.id" (click)="eliminar(worker)">Borrar</button>
+                </td>
             </tr>
         </table>
     </div>
