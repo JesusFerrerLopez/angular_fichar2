@@ -1,0 +1,65 @@
+/* Estilo para el input de búsqueda */
+input[type="text"] {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+/* Estilo cuando el input está enfocado */
+input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #fff;
+}
+
+/* Estilo para el texto dentro del input */
+input[type="text"]::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* Mejorar la visibilidad de los resultados de la tabla */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Agregar estilo cuando no hay trabajadores */
+p {
+    font-size: 16px;
+    color: #888;
+}
+
+/* Agregar separación entre tablas */
+.table-filtered-workers {
+    margin-top: 30px;
+}   
+
+.table-filtered-workers th{
+    background-color: #595959;
+    color: #fff;
+}
+
+.table-filtered-workers td{
+    background-color: #f4f4f4;
+    color: #333;
+}

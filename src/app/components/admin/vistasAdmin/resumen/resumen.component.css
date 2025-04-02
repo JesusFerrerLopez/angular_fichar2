@@ -1,0 +1,54 @@
+.card h3 {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.card h3 i {
+    margin-right: 10px;
+    color: #4a90e2;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: #ddd;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th {
+    text-align: left;
+    background: #f4f4f4;
+    padding: 10px;
+    font-weight: bold;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+tr:hover {
+    background: #f1f1f1;
+}
+
+td i {
+    color: #4CAF50;
+    margin-right: 5px;
+}
+
+p {
+    text-align: center;
+    color: #777;
+}

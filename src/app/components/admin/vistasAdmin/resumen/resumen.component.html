@@ -1,0 +1,28 @@
+<div class="card">
+    <h3><i class="fas fa-stream"></i> Resumen diario</h3>
+    <hr>
+    <div *ngIf="legibleWorkers && legibleWorkers.length > 0; else loading">
+        <table>
+            <tr>
+                <th>Empleado</th>
+                <th>Hora</th>
+                <th>Acción</th>
+            </tr>
+            <tr *ngFor="let worker of legibleWorkers">
+                <td>{{ worker.name }}</td>
+                <td>{{ worker.last_action.datetime.split(' ')[1] }}</td>
+                <td>
+                    <ng-container [ngSwitch]="worker.last_action.type">
+                        <span *ngSwitchCase="'play'" style="color:#26A69A">▶ Inicio</span> 
+                        <span *ngSwitchCase="'stop'" style="color:#C95C58">◼ Jornada terminada</span>
+                        <span *ngSwitchCase="'pause'" style="color:#F6CE8C">❚❚ Pausa {{ worker.pause_reason}}</span>
+                        <span *ngSwitchDefault style="color:#F6CE8C">❚❚</span>
+                    </ng-container>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <ng-template #loading>
+        <p>Cargando trabajadores...</p>
+    </ng-template>
+</div>

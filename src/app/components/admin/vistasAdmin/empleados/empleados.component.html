@@ -1,0 +1,38 @@
+<div class="card">
+    <h3><i class="fas fa-user"></i> Empleados ({{ workers.length }})</h3>
+    <hr>
+    <div *ngIf="workers && workers.length > 0; else loading">
+        <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterWorkers()" />
+
+        <table *ngIf="filteredWorkers && filteredWorkers.length > 0">
+            <tr>
+            <th>Empleado</th>
+            <th>Código</th>
+            <th>#</th>
+            </tr>
+            <tr *ngFor="let worker of filteredWorkers">
+            <td>{{ worker.name }}</td>
+            <td>{{ worker.code }}</td>
+            <td>Acciones de edición y borrado</td>
+            </tr>
+        </table>
+        
+        <br>
+
+        <table class="table-filtered-workers" *ngIf="notFilteredWorkers && notFilteredWorkers.length > 0">
+            <tr>
+                <th>Empleado</th>
+                <th>Código</th>
+                <th>#</th>
+            </tr>
+            <tr *ngFor="let worker of notFilteredWorkers">
+                <td>{{ worker.name }}</td>
+                <td>{{ worker.code }}</td>
+                <td>Acciones de edición y borrado</td>
+            </tr>
+        </table>
+    </div>
+    <ng-template #loading>
+        <p>Cargando trabajadores...</p>
+    </ng-template>
+</div>

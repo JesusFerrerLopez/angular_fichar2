@@ -35,4 +35,15 @@ export class UserService {
       throw error;
     }
   }
+
+  // Método que recibe todos los empleados de la empresa logeada
+  async getAllWorkers(): Promise<any> {
+    try {
+      const response = await this.http.get(`${this.apiUrl}users`).toPromise();
+      return response;
+    } catch (error) {
+      console.error('Error al obtener todos los empleados:', error);
+      throw error;
+    }
+  }
 }
