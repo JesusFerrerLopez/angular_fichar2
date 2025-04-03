@@ -1,12 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   // URL de la API
-  private apiUrl = 'http://fichar2.local/api/v1/';
+  private apiUrl: string = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

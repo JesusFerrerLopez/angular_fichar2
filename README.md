@@ -1,59 +1,89 @@
-# Fichar2Laravel
+# Fichar2 cliente ANGULAR
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.5.
+## índice
 
-## Development server
+1. [Introducción](#introducción)  
+2. [Instalación](#instalación)  
+3. [Uso](#uso)  
 
-To start a local development server, run:
+## Introducción
 
-```bash
-ng serve
+Cliente en angular que toma los servicios de la API en laravel
+
+## Instalación
+
+1. Clona el repositorio:  
+    ```bash
+    git clone https://github.com/tu-usuario/fichar2_angular.git
+    ```
+
+2. Navega al directorio del proyecto:  
+    ```bash
+    cd fichar2_angular
+    ```
+
+3. Instala las dependencias:  
+    ```bash
+    npm install
+    ```
+
+4. Configurar variables de entorno.
+    ```bash
+    export const environment = {
+    production: false,
+    // La URL de la API de tu backend aquí
+    apiUrl: 'http://fichar2.local/api/v1/'
+    };
+    ```
+
+5. Inicia el servidor de desarrollo:  
+    ```bash
+    ng serve
+    ```
+
+6. Abre tu navegador y accede a `http://localhost:4200`.
+
+## Uso
+
+### Estructura de directorios
+```plaintext
+fichar2_angular/
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── models/
+│   │   ├── app.module.ts
+│   │   ├── app.component.ts
+│   │   ├── app.config.ts 
+│   │   ├── app.routes.ts
+│   │   └── app.component.html
+│   ├── environments/
+│   │   └── environment.ts
+│   ├── index.html
+│   ├── main.ts
+│   └── styles.css
+├── angular.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
+### Explicación de la funcionalidad
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+#### Components
+Contiene los componentes de la aplicación Angular. Cada componente representa una parte específica de la interfaz de usuario y está compuesto por un archivo HTML, un archivo CSS y un archivo TypeScript.
 
-## Code scaffolding
+#### Services
+Incluye los servicios que manejan la lógica de negocio y la comunicación con la API. Los servicios son utilizados para compartir datos entre componentes y realizar peticiones HTTP.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+#### App Config
+Archivo de configuración de la aplicación. Puede contener constantes, configuraciones globales o valores que se utilizan en toda la aplicación.
 
-```bash
-ng generate component component-name
-```
+#### App Routes
+Define las rutas de la aplicación. Es donde se configuran las URL y los componentes asociados a cada ruta para la navegación dentro de la aplicación.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+#### Environments
+Contiene configuraciones específicas para diferentes entornos (desarrollo, producción, etc.). Por ejemplo, la URL de la API puede variar según el entorno.
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+#### Main.ts
+Es el punto de entrada principal de la aplicación Angular. Aquí se inicializa la aplicación y se arranca el módulo raíz (`AppModule`).
