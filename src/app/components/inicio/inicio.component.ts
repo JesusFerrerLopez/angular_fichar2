@@ -37,6 +37,7 @@ export class InicioComponent {
     sessionStorage.removeItem('code');
     sessionStorage.removeItem('name');
     sessionStorage.removeItem('rol');
+    sessionStorage.removeItem('id');
   }
 
   // Método para comenzar la jornada
@@ -129,6 +130,7 @@ export class InicioComponent {
       if (!user) { Swal.fire('Error', 'Código de empleado incorrecto', 'error'); return; }
 
       sessionStorage.setItem('code', code);
+      sessionStorage.setItem('id', user.id);
       sessionStorage.setItem('name', user.name);
       sessionStorage.setItem('role', user.role);
       this.router.navigate(['/informes']);

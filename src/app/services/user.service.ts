@@ -5,6 +5,7 @@ import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
+
 export class UserService {
   // URL de la API
   private apiUrl: string = environment.apiUrl;

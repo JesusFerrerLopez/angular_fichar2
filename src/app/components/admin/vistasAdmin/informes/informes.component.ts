@@ -63,7 +63,7 @@ export class InformesComponent {
         endDate: this.endDate
       };
 
-      this.router.navigate(['/admin/informes'], { state: data });
+      this.router.navigate(['/informes/resumen'], { state: data });  
     }).catch(error => {
       console.error('Error al obtener los tiempos:', error);
     });

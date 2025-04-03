@@ -10,57 +10,54 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './resumenes.component.css'
 })
 export class ResumenesComponent {
-  // Variables para la vista
-  nombreEmpleado: string;
-  code: string;
-  data: { [key: string]: any }[];
-  jornadas: { Fecha: string; Entrada: string; Salida: string; Jornada: string; Fichaje: string }[];
+  workers: any[] = []; // Trabajadores sin jornadas procesadas
+  startDate: string = '';
+  endDate: string = '';
+  workersWithJornadas: any[] = [];
 
-  // Variables para el formulario
-  startDate: string;
-  endDate: string;
+  constructor(private user:UserService) {}
 
-  constructor(private userService: UserService) {
-    // Si la sesión no tiene código de empleado, redirigir a la página de inicio
-    this.code = sessionStorage.getItem('code') || '';
-    if (!this.code) {
-      window.location.href = '/';
-    }
-
-    // Recuperamos la información de la sesión
-    this.nombreEmpleado = sessionStorage.getItem('name') || '';
-
-    // Recuperamos los datos enviados de la vista anterior o de haber vuelto a cargar la vista
-    this.data = history.state.data;
-
-    // Inicializamos las fechas del formuarlio usando el primer y último día de los datos
-    this.startDate = this.data[0]['datetime'].split(' ')[0];
-    this.endDate = this.data[this.data.length - 1]['datetime'].split(' ')[0];
-
-    // Llamamos al método para procesar los datos
-    this.jornadas = this.processData(this.data);
+  ngOnInit(): void {
+    // Recoger los datos enviados mediante el estado
+    const state = history.state;
+    console.log('Estado:', state);
+    this.workers = state.workers.workers || [];
+    this.startDate = state.startDate || '';
+    this.endDate = state.endDate || '';
+    this.saveWorkerTimes();
   }
 
-  getResumen() {
-    const startDateInput = document.querySelector('#startDate') as HTMLInputElement;
-    const endDateInput = document.querySelector('#endDate') as HTMLInputElement;
+  /**
+   * Método que recibe el array de las ids de los trabajadores y fecha de inicio y fin
+   * y devuelve un json con los datos de los trabajadores y sus jornadas en el rango de fechas
+   * @param workers Array de ids de los trabajadores
+   * @param startDate Fecha de inicio 
+   * @param endDate Fecha de fin
+   * @returns Json con los datos de los trabajadores y sus jornadas
+   */
+  getResumenes() {
+    const validate = this.validateForm();
+    if (!validate) {return;}
 
-    const startDate = new Date(startDateInput.value);
-    const endDate = new Date(endDateInput.value);
+    const ids = this.workers.map((employee) => employee.id);
 
-    if (endDate < startDate) {
-      // Si la fecha de fin es menor que la fecha de inicio, mostrar un mensaje de error
-      document.querySelector('#error')!.innerHTML = 'La fecha de fin no puede ser menor que la fecha de inicio';
-      return;
-    } else {
-      // Si la fecha de fin es correcta, ocultar el mensaje de error
-      document.querySelector('#error')!.innerHTML = '';
-    }
+    this.user.getTimes(ids, this.startDate, this.endDate).then(response => {
+      // Volvemos a procesar los datos de los trabajadores y sus jornadas
+      this.workers = response.workers || [];
+      this.saveWorkerTimes();
+    });
+  }
 
-    // Llamamos al método para obtener las jornadas
-    this.userService.getJornadas(this.code, this.startDate, this.endDate).then((response: any) => {
-      this.data = response.times;
-      this.jornadas = this.processData(this.data);
+  saveWorkerTimes() {
+    // Limpiamos la lista de trabajadores con jornadas
+    this.workersWithJornadas = [];
+    // Procesamos los times de cada trabajador  y los guardamos en la lista de trabajadores con jornadas
+    this.workers.forEach((worker: any) => {
+      const jornadas = this.processData(worker.times);
+      this.workersWithJornadas.push({
+        ...worker,
+        jornadas: jornadas
+      });
     });
   }
 
@@ -158,8 +155,14 @@ export class ResumenesComponent {
       }
     });
 
-    // Comprobamos si la última jornada se ha cerrado correctamente y sí estamos en el mismo día de hoy.
     return jornadas;
+  }
 
+  validateForm() {
+    if (this.startDate > this.endDate) {
+      alert('La fecha de inicio no puede ser mayor que la fecha de fin.');
+      return false;
+    }
+    return true;
   }
 }

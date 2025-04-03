@@ -13,14 +13,12 @@ import Swal from 'sweetalert2';
 export class InformesComponent {
   startDate: string;
   endDate: string;
-  employeeCode: string;
+  employeeCode: string = sessionStorage.getItem('code') || ''; // Código de empleado
+  id: number = parseInt(sessionStorage.getItem('id') || '0', 10);; // ID del empleado
 
   constructor(private router: Router, private userService: UserService) {
-    // Establecer el código de empleado desde la sesión
-    this.employeeCode = sessionStorage.getItem('code') || '';
-
     // Si no hay código de empleado, redirigir a la página de inicio
-    if (!this.employeeCode) {
+    if (!this.id) {
       window.location.href = '/';
     }
 
@@ -77,10 +75,12 @@ export class InformesComponent {
     // this.startDate = '1234-01-01'; // Cambiar a la fecha de inicio
 
     // Llamar al servicio para obtener las jornadas
-    const response = await this.userService.getJornadas(this.employeeCode, this.startDate, this.endDate);
+    const response = await this.userService.getTimes([this.id], this.startDate, this.endDate);
+
+    console.log('Respuesta del servicio:', response);
 
     // Si la respuesta está vacía, mostrar un mensaje de error
-    if (response.times.length === 0) {
+    if (response.workers.length === 0) {
       Swal.fire({
         icon: 'error',
         title: 'Sin datos',
@@ -89,7 +89,13 @@ export class InformesComponent {
       return;
     }
 
+    const data = {
+      workers: response,
+      startDate: this.startDate,
+      endDate: this.endDate,
+    }
+
     // Si la respuesta es exitosa, redirigir a la vista de resumenes
-    this.router.navigate(['/informes/resumen'], { state: { data: response.times } });
+    this.router.navigate(['/informes/resumen'], { state: data });
   }
 }
